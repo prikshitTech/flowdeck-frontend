@@ -15,6 +15,11 @@ const PagesScreen = lazy(() => import('@/features/pages/PagesScreen'));
 const BoardsScreen = lazy(() => import('@/features/boards/BoardsScreen'));
 const BoardScreen = lazy(() => import('@/features/boards/BoardScreen'));
 const ChannelsScreen = lazy(() => import('@/features/channels/ChannelsScreen'));
+const FilesScreen = lazy(() => import('@/features/files/FilesScreen'));
+const SearchScreen = lazy(() => import('@/features/search/SearchScreen'));
+const AuditScreen = lazy(() => import('@/features/audit/AuditScreen'));
+const NotificationsScreen = lazy(() => import('@/features/notifications/NotificationsScreen'));
+const SettingsScreen = lazy(() => import('@/features/settings/SettingsScreen'));
 
 function withSuspense(node: ReactNode) {
   return <Suspense fallback={<PageLoader />}>{node}</Suspense>;
@@ -35,6 +40,8 @@ export const router = createBrowserRouter([
         element: <AppShell />,
         children: [
           { path: '/', element: withSuspense(<WorkspacesScreen />) },
+          { path: '/notifications', element: withSuspense(<NotificationsScreen />) },
+          { path: '/settings', element: withSuspense(<SettingsScreen />) },
           {
             path: '/w/:workspaceId',
             element: <WorkspaceLayout />,
@@ -44,7 +51,10 @@ export const router = createBrowserRouter([
               { path: 'pages/:pageId?', element: withSuspense(<PagesScreen />) },
               { path: 'boards', element: withSuspense(<BoardsScreen />) },
               { path: 'boards/:boardId', element: withSuspense(<BoardScreen />) },
-              { path: 'channels/:channelId?', element: withSuspense(<ChannelsScreen />) }
+              { path: 'channels/:channelId?', element: withSuspense(<ChannelsScreen />) },
+              { path: 'files', element: withSuspense(<FilesScreen />) },
+              { path: 'search', element: withSuspense(<SearchScreen />) },
+              { path: 'audit', element: withSuspense(<AuditScreen />) }
             ]
           }
         ]
