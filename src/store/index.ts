@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 
 import authReducer, { sessionExpired } from './slices/authSlice';
 import boardReducer from './slices/boardSlice';
+import channelReducer from './slices/channelSlice';
 import notificationReducer from './slices/notificationSlice';
 import pageReducer from './slices/pageSlice';
 import uiReducer from './slices/uiSlice';
@@ -15,7 +16,8 @@ export const store = configureStore({
     workspaces: workspaceReducer,
     notifications: notificationReducer,
     pages: pageReducer,
-    boards: boardReducer
+    boards: boardReducer,
+    channels: channelReducer
   }
 });
 
