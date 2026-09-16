@@ -9,6 +9,8 @@ import { PageLoader } from '@/components/ui/Spinner';
 const LoginScreen = lazy(() => import('@/features/auth/LoginScreen'));
 const RegisterScreen = lazy(() => import('@/features/auth/RegisterScreen'));
 const WorkspacesScreen = lazy(() => import('@/features/workspaces/WorkspacesScreen'));
+const OverviewScreen = lazy(() => import('@/features/workspaces/OverviewScreen'));
+const MembersScreen = lazy(() => import('@/features/workspaces/MembersScreen'));
 
 function withSuspense(node: ReactNode) {
   return <Suspense fallback={<PageLoader />}>{node}</Suspense>;
@@ -32,7 +34,10 @@ export const router = createBrowserRouter([
           {
             path: '/w/:workspaceId',
             element: <WorkspaceLayout />,
-            children: [{ index: true, element: <p className="p-6 text-sm text-stone-500">Overview</p> }]
+            children: [
+              { index: true, element: withSuspense(<OverviewScreen />) },
+              { path: 'members', element: withSuspense(<MembersScreen />) }
+            ]
           }
         ]
       }
