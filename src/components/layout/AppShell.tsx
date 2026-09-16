@@ -4,6 +4,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
+import RealtimeBridge from '@/realtime/RealtimeBridge';
 import { fetchUnreadCount } from '@/store/slices/notificationSlice';
 import { fetchWorkspaces } from '@/store/slices/workspaceSlice';
 import { setSidebarOpen } from '@/store/slices/uiSlice';
@@ -25,6 +26,7 @@ export default function AppShell() {
 
   return (
     <div className="flex h-full">
+      <RealtimeBridge />
       {sidebarOpen && (
         <button
           type="button"

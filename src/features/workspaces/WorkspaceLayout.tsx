@@ -2,7 +2,9 @@ import { useEffect } from 'react';
 import { FiAlertCircle } from 'react-icons/fi';
 import { Link, Outlet, useParams } from 'react-router-dom';
 
+import useRealtimeRoom from '@/realtime/useRealtimeRoom';
 import { EmptyState } from '@/components/ui/Display';
+import { SOCKET_EVENT } from '@/realtime/socket';
 import { PageLoader } from '@/components/ui/Spinner';
 import { clearCurrentWorkspace, fetchWorkspace } from '@/store/slices/workspaceSlice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -11,6 +13,8 @@ export default function WorkspaceLayout() {
   const dispatch = useAppDispatch();
   const { workspaceId } = useParams();
   const { current, currentStatus } = useAppSelector((state) => state.workspaces);
+
+  useRealtimeRoom(SOCKET_EVENT.WORKSPACE_JOIN, SOCKET_EVENT.WORKSPACE_LEAVE, workspaceId, workspaceId);
 
   useEffect(() => {
     if (workspaceId) {

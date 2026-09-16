@@ -5,6 +5,8 @@ import Button from '@/components/ui/Button';
 import Composer from './Composer';
 import MessageList from './MessageList';
 import useNotify from '@/hooks/useNotify';
+import useRealtimeRoom from '@/realtime/useRealtimeRoom';
+import { SOCKET_EVENT } from '@/realtime/socket';
 import { channelApi } from '@/api/services';
 import {
   deleteMessage,
@@ -33,6 +35,8 @@ export default function ChannelView({ channel, workspaceId, canWrite }: ChannelV
 
   const ref = { workspaceId, channelId: channel.id };
   const canPost = canWrite && channel.joined;
+
+  useRealtimeRoom(SOCKET_EVENT.CHANNEL_JOIN, SOCKET_EVENT.CHANNEL_LEAVE, channel.id, ref);
 
   useEffect(() => {
     dispatch(openChannel(channel.id));

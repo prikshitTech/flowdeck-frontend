@@ -8,6 +8,8 @@ import Button from '@/components/ui/Button';
 import CardModal from './CardModal';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import useNotify from '@/hooks/useNotify';
+import useRealtimeRoom from '@/realtime/useRealtimeRoom';
+import { SOCKET_EVENT } from '@/realtime/socket';
 import { PageLoader } from '@/components/ui/Spinner';
 import { archiveList, clearBoard, createCard, createList, fetchBoard, moveCard } from '@/store/slices/boardSlice';
 import { hasRole } from '@/utils/roles';
@@ -25,6 +27,8 @@ export default function BoardScreen() {
   const [listName, setListName] = useState('');
 
   const canWrite = hasRole(workspace.role, 'member');
+
+  useRealtimeRoom(SOCKET_EVENT.BOARD_JOIN, SOCKET_EVENT.BOARD_LEAVE, boardId, { workspaceId: workspace.id, boardId });
 
   useEffect(() => {
     dispatch(fetchBoard({ workspaceId: workspace.id, boardId }));

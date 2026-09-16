@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import IconButton from '@/components/ui/IconButton';
 import { Avatar } from '@/components/ui/Display';
 import { logout } from '@/store/slices/authSlice';
+import { disconnectSocket } from '@/realtime/socket';
 import { resetNotifications } from '@/store/slices/notificationSlice';
 import { toggleTheme } from '@/store/slices/uiSlice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -17,6 +18,7 @@ function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
   const workspaceName = useAppSelector((state) => state.workspaces.current?.name);
 
   const signOut = useCallback(async () => {
+    disconnectSocket();
     await dispatch(logout());
     dispatch(resetNotifications());
     navigate('/login', { replace: true });
