@@ -11,6 +11,7 @@ const RegisterScreen = lazy(() => import('@/features/auth/RegisterScreen'));
 const WorkspacesScreen = lazy(() => import('@/features/workspaces/WorkspacesScreen'));
 const OverviewScreen = lazy(() => import('@/features/workspaces/OverviewScreen'));
 const MembersScreen = lazy(() => import('@/features/workspaces/MembersScreen'));
+const PagesScreen = lazy(() => import('@/features/pages/PagesScreen'));
 
 function withSuspense(node: ReactNode) {
   return <Suspense fallback={<PageLoader />}>{node}</Suspense>;
@@ -36,7 +37,9 @@ export const router = createBrowserRouter([
             element: <WorkspaceLayout />,
             children: [
               { index: true, element: withSuspense(<OverviewScreen />) },
-              { path: 'members', element: withSuspense(<MembersScreen />) }
+              { path: 'members', element: withSuspense(<MembersScreen />) },
+              { path: 'pages', element: withSuspense(<PagesScreen />) },
+              { path: 'pages/:pageId', element: withSuspense(<PagesScreen />) }
             ]
           }
         ]
