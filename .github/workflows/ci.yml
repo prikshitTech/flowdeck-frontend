@@ -1,0 +1,44 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: type check and build
+    runs-on: ubuntu-latest
+
+    env:
+      VITE_API_URL: http://localhost:4000/api/v1
+      VITE_SOCKET_URL: http://localhost:4000
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: install dependencies
+        run: npm ci
+
+      - name: type check
+        run: npm run typecheck
+
+      - name: build
+        run: npm run build
+
+      - name: keep the build
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 7
