@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 import { authApi } from '@/api/services';
+import { clearOfflineCache } from '@/utils/offline';
 import { tokenStorage } from '@/utils/storage';
 import type { AuthResult, User } from '@/types/models';
 
@@ -42,6 +43,7 @@ export const logout = createAsyncThunk('auth/logout', async () => {
     await authApi.logout();
   } finally {
     tokenStorage.clear();
+    await clearOfflineCache();
   }
 });
 

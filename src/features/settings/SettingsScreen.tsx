@@ -12,6 +12,7 @@ import useRequest from '@/hooks/useRequest';
 import { Input } from '@/components/ui/FormField';
 import { PageHeader, Panel } from '@/components/ui/Display';
 import { authApi } from '@/api/services';
+import { clearOfflineCache } from '@/utils/offline';
 import { disconnectSocket } from '@/realtime/socket';
 import { requiredText, strongPassword } from '@/utils/validation';
 import { sessionExpired, updateProfile } from '@/store/slices/authSlice';
@@ -65,6 +66,7 @@ export default function SettingsScreen() {
   const endAllSessions = () => {
     disconnectSocket();
     tokenStorage.clear();
+    void clearOfflineCache();
     dispatch(sessionExpired());
     navigate('/login', { replace: true });
   };

@@ -7,6 +7,7 @@ import notificationReducer from './slices/notificationSlice';
 import pageReducer from './slices/pageSlice';
 import uiReducer from './slices/uiSlice';
 import workspaceReducer from './slices/workspaceSlice';
+import { clearOfflineCache } from '@/utils/offline';
 import { sessionEvents } from '@/api/sessionEvents';
 
 export const store = configureStore({
@@ -21,7 +22,10 @@ export const store = configureStore({
   }
 });
 
-sessionEvents.onExpired(() => store.dispatch(sessionExpired()));
+sessionEvents.onExpired(() => {
+  void clearOfflineCache();
+  store.dispatch(sessionExpired());
+});
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
