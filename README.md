@@ -45,6 +45,7 @@ The backend's `CORS_ORIGINS` must include `http://localhost:5173`.
 | Audit log | `/w/:id/audit` | Admins only, filterable, infinite scroll |
 | Notifications | `/notifications` | Mentions, assignments, due dates, mark read |
 | Settings | `/settings` | Profile, password, active sessions, sign out everywhere |
+| Super admin setup | `/setup/super-admin` | Open page that creates the one platform admin, then closes for good |
 
 ## How it is put together
 
@@ -111,6 +112,13 @@ checks for that, so the message never shows twice.
 changes, for example a new filter. Members, boards, files, audit log, notifications,
 revisions and search all use this pair. Channels load older messages from the top using
 the backend's cursor, and keep your scroll position so the view doesn't jump.
+
+### Super admin
+
+Visiting `/setup/super-admin` while the seat is open creates the single platform admin and
+signs you straight in. Once it is taken the page says so instead. That account sees every
+workspace with owner rights, including private channels and audit logs, and has no
+notifications inbox, so the sidebar hides it.
 
 ### Realtime
 
