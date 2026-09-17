@@ -132,7 +132,7 @@ export default function BoardScreen() {
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex min-h-0 flex-1 gap-3 overflow-x-auto p-4">
+        <div className="flex min-h-0 flex-1 items-start gap-3 overflow-auto p-4">
           {snapshot.lists.map((column) => (
             <BoardColumn
               key={column.id}

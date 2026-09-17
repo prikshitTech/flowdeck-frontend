@@ -51,7 +51,7 @@ function BoardColumn({ column, canWrite, onOpenCard, onAddCard, onArchive }: Boa
             ref={provided.innerRef}
             {...provided.droppableProps}
             className={cn(
-              'flex min-h-16 flex-1 flex-col gap-2 overflow-y-auto px-2 pb-2',
+              'flex min-h-16 flex-col gap-2 px-2 pb-2',
               snapshot.isDraggingOver && 'bg-brand-50 dark:bg-brand-800/20'
             )}
           >

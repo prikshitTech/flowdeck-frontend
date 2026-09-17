@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, type KeyboardEvent } from 'react';
 import { FiCalendar, FiCheckCircle, FiUsers } from 'react-icons/fi';
 
 import { Badge } from '@/components/ui/Display';
@@ -22,13 +22,19 @@ interface CardItemProps {
 function CardItem({ card, dragging, onOpen }: CardItemProps) {
   const overdue = !card.completedAt && card.dueAt !== null && new Date(card.dueAt).getTime() < Date.now();
 
+  const openWithKeyboard = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter') {
+      onOpen(card);
+    }
+  };
+
   return (
-    <button
-      type="button"
+    <div
       onClick={() => onOpen(card)}
+      onKeyDown={openWithKeyboard}
       className={cn(
-        'flex w-full flex-col gap-2 rounded-md border bg-white p-3 text-left text-sm dark:bg-stone-900',
-        dragging ? 'border-brand-600 shadow-md' : 'border-stone-200 hover:border-stone-400 dark:border-stone-700'
+        'flex w-full cursor-grab flex-col gap-2 rounded-md border bg-white p-3 text-left text-sm select-none dark:bg-stone-900',
+        dragging ? 'cursor-grabbing border-brand-600 shadow-md' : 'border-stone-200 hover:border-stone-400 dark:border-stone-700'
       )}
     >
       <span className={cn('font-medium', card.completedAt && 'text-stone-400 line-through')}>{card.title}</span>
@@ -53,7 +59,7 @@ function CardItem({ card, dragging, onOpen }: CardItemProps) {
           </span>
         )}
       </span>
-    </button>
+    </div>
   );
 }
 
