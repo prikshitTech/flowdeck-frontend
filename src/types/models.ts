@@ -178,6 +178,7 @@ export interface AppNotification {
   entityId: string | null;
   workspace: string;
   actor: string | null;
+  link: string | null;
   readAt: string | null;
   createdAt: string;
 }

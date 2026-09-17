@@ -1,5 +1,23 @@
 import { memo, useCallback, useEffect } from 'react';
-import { FiAtSign, FiBell, FiCalendar, FiCheck, FiClipboard } from 'react-icons/fi';
+import type { IconType } from 'react-icons';
+import {
+  FiArchive,
+  FiArrowRight,
+  FiAtSign,
+  FiBell,
+  FiCalendar,
+  FiCheck,
+  FiCheckCircle,
+  FiEdit3,
+  FiKey,
+  FiRotateCcw,
+  FiShield,
+  FiUserCheck,
+  FiUserMinus,
+  FiUserPlus,
+  FiUserX
+} from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/ui/Button';
 import LoadMoreSentinel from '@/components/common/LoadMoreSentinel';
@@ -15,35 +33,48 @@ import { timeAgo } from '@/utils/format';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import type { AppNotification } from '@/types/models';
 
-const ICONS: Record<string, typeof FiBell> = {
+const ICONS: Record<string, IconType> = {
   mention: FiAtSign,
-  card_assigned: FiClipboard,
-  card_due_soon: FiCalendar
+  card_assigned: FiUserCheck,
+  card_unassigned: FiUserMinus,
+  card_moved: FiArrowRight,
+  card_completed: FiCheckCircle,
+  card_reopened: FiRotateCcw,
+  card_updated: FiEdit3,
+  card_archived: FiArchive,
+  card_due_soon: FiCalendar,
+  page_edited: FiEdit3,
+  page_archived: FiArchive,
+  member_added: FiUserPlus,
+  member_role_changed: FiShield,
+  member_removed: FiUserX,
+  member_left: FiUserMinus,
+  ownership_transferred: FiKey
 };
 
-const NotificationRow = memo(function NotificationRow({
-  notification,
-  onRead
-}: {
+interface NotificationRowProps {
   notification: AppNotification;
+  onOpen: (notification: AppNotification) => void;
   onRead: (id: string) => void;
-}) {
+}
+
+const NotificationRow = memo(function NotificationRow({ notification, onOpen, onRead }: NotificationRowProps) {
   const Icon = ICONS[notification.type] ?? FiBell;
   const unread = !notification.readAt;
 
   return (
     <li className={cn('flex items-start gap-3 px-4 py-3', unread && 'bg-brand-50/60 dark:bg-brand-800/10')}>
-      <span className="mt-0.5 text-stone-500">
+      <span className={cn('mt-0.5', unread ? 'text-brand-700 dark:text-brand-500' : 'text-stone-400')}>
         <Icon />
       </span>
-      <div className="min-w-0 flex-1">
+      <button type="button" onClick={() => onOpen(notification)} className="min-w-0 flex-1 text-left">
         <p className={cn('text-sm', unread && 'font-medium')}>{notification.title}</p>
         {notification.body && <p className="truncate text-sm text-stone-500">{notification.body}</p>}
         <p className="mt-0.5 text-xs text-stone-400">{timeAgo(notification.createdAt)}</p>
-      </div>
+      </button>
       {unread && (
         <Button size="sm" variant="ghost" icon={<FiCheck />} onClick={() => onRead(notification.id)}>
-          Mark read
+          <span className="hidden sm:inline">Mark read</span>
         </Button>
       )}
     </li>
@@ -52,6 +83,7 @@ const NotificationRow = memo(function NotificationRow({
 
 export default function NotificationsScreen() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const notify = useNotify();
   const { items, page, hasMore, loading, unread } = useAppSelector((state) => state.notifications);
 
@@ -70,6 +102,19 @@ export default function NotificationsScreen() {
         .catch((error) => notify.error(error));
     },
     [dispatch, notify]
+  );
+
+  const open = useCallback(
+    (notification: AppNotification) => {
+      if (!notification.readAt) {
+        markRead(notification.id);
+      }
+
+      if (notification.link) {
+        navigate(notification.link);
+      }
+    },
+    [markRead, navigate]
   );
 
   const markAll = () => {
@@ -93,11 +138,15 @@ export default function NotificationsScreen() {
       />
       <Panel>
         {!loading && items.length === 0 ? (
-          <EmptyState icon={<FiBell />} title="Nothing here yet" message="Mentions, assignments and due dates show up here." />
+          <EmptyState
+            icon={<FiBell />}
+            title="Nothing here yet"
+            message="Assignments, card changes, mentions and membership updates show up here."
+          />
         ) : (
           <ul className="divide-y divide-stone-100 dark:divide-stone-800">
             {items.map((notification) => (
-              <NotificationRow key={notification.id} notification={notification} onRead={markRead} />
+              <NotificationRow key={notification.id} notification={notification} onOpen={open} onRead={markRead} />
             ))}
           </ul>
         )}
