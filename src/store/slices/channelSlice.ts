@@ -61,8 +61,8 @@ export const fetchMessages = createAsyncThunk(
 
 export const sendMessage = createAsyncThunk(
   'channels/send',
-  ({ workspaceId, channelId, body }: ChannelRef & { body: string; author: Person; tempId: string }) =>
-    channelApi.send(workspaceId, channelId, { body })
+  ({ workspaceId, channelId, body, mentions }: ChannelRef & { body: string; mentions: string[]; author: Person; tempId: string }) =>
+    channelApi.send(workspaceId, channelId, { body, mentions })
 );
 
 export const deleteMessage = createAsyncThunk(
@@ -187,7 +187,7 @@ const channelSlice = createSlice({
         state.loadingMessages = false;
       })
       .addCase(sendMessage.pending, (state, action) => {
-        const { channelId, body, author, tempId } = action.meta.arg;
+        const { channelId, body, author, tempId, mentions } = action.meta.arg;
 
         state.messages.push({
           id: tempId,
@@ -196,7 +196,7 @@ const channelSlice = createSlice({
           author,
           parent: null,
           replyCount: 0,
-          mentions: [],
+          mentions,
           reactions: [],
           editedAt: null,
           createdAt: new Date().toISOString(),

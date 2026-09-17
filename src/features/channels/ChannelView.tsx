@@ -1,13 +1,15 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { FiHash, FiLock } from 'react-icons/fi';
 
 import Button from '@/components/ui/Button';
 import Composer from './Composer';
 import MessageList from './MessageList';
 import useNotify from '@/hooks/useNotify';
+import useRequest from '@/hooks/useRequest';
+import { findMentionedIds, type MentionCandidate } from '@/utils/mentions';
 import useRealtimeRoom from '@/realtime/useRealtimeRoom';
 import { SOCKET_EVENT } from '@/realtime/socket';
-import { channelApi } from '@/api/services';
+import { channelApi, workspaceApi } from '@/api/services';
 import {
   deleteMessage,
   fetchMessages,
@@ -38,6 +40,16 @@ export default function ChannelView({ channel, workspaceId, canWrite }: ChannelV
 
   useRealtimeRoom(SOCKET_EVENT.CHANNEL_JOIN, SOCKET_EVENT.CHANNEL_LEAVE, channel.id, ref);
 
+  const members = useRequest(() => workspaceApi.members(workspaceId, { limit: 100 }), [workspaceId]);
+
+  const candidates = useMemo<MentionCandidate[]>(
+    () =>
+      (members.data?.items ?? [])
+        .filter((member) => member.user.id !== user.id)
+        .map((member) => ({ id: member.user.id, name: member.user.name })),
+    [members.data, user.id]
+  );
+
   useEffect(() => {
     dispatch(openChannel(channel.id));
     dispatch(fetchMessages({ workspaceId, channelId: channel.id }));
@@ -60,6 +72,7 @@ export default function ChannelView({ channel, workspaceId, canWrite }: ChannelV
           workspaceId,
           channelId: channel.id,
           body,
+          mentions: findMentionedIds(body, candidates),
           tempId: newTempId(),
           author: { id: user.id, name: user.name, email: user.email }
         })
@@ -67,7 +80,7 @@ export default function ChannelView({ channel, workspaceId, canWrite }: ChannelV
         .unwrap()
         .catch((error) => notify.error(error));
     },
-    [dispatch, notify, workspaceId, channel.id, user]
+    [dispatch, notify, workspaceId, channel.id, user, candidates]
   );
 
   const react = useCallback(
@@ -127,7 +140,7 @@ export default function ChannelView({ channel, workspaceId, canWrite }: ChannelV
         onDelete={remove}
       />
 
-      <Composer channelName={channel.name} disabled={!canPost} onSend={send} />
+      <Composer channelName={channel.name} disabled={!canPost} candidates={candidates} onSend={send} />
     </div>
   );
 }

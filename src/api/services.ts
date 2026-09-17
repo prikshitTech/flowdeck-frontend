@@ -143,7 +143,7 @@ export const channelApi = {
     postRequest<unknown>(endpoints.channels.read(workspaceId, channelId)),
   messages: (workspaceId: string, channelId: string, params?: QueryParams) =>
     getListRequest<Message, CursorMeta>(endpoints.channels.messages(workspaceId, channelId), params),
-  send: (workspaceId: string, channelId: string, body: { body: string; parent?: string }) =>
+  send: (workspaceId: string, channelId: string, body: { body: string; parent?: string; mentions?: string[] }) =>
     postRequest<Message>(endpoints.channels.messages(workspaceId, channelId), body),
   edit: (workspaceId: string, channelId: string, messageId: string, body: string) =>
     patchRequest<Message>(endpoints.channels.message(workspaceId, channelId, messageId), { body }),
