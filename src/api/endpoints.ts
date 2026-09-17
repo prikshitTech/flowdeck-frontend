@@ -1,6 +1,9 @@
 const workspace = (workspaceId: string) => `/workspaces/${workspaceId}`;
 
 export const endpoints = {
+  admin: {
+    setup: '/admin/setup'
+  },
   auth: {
     register: '/auth/register',
     login: '/auth/login',

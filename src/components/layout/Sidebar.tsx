@@ -17,7 +17,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 
 import Logo from './Logo';
 import useWorkspaceId from '@/hooks/useWorkspaceId';
-import { hasRole } from '@/utils/roles';
+import { hasRole, isSuperAdmin } from '@/utils/roles';
 import { cn } from '@/utils/cn';
 import { useAppSelector } from '@/store/hooks';
 import type { WorkspaceRole } from '@/types/models';
@@ -54,6 +54,7 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
   const workspaceId = useWorkspaceId();
   const workspaces = useAppSelector((state) => state.workspaces.items);
   const unread = useAppSelector((state) => state.notifications.unread);
+  const platformAdmin = useAppSelector((state) => isSuperAdmin(state.auth.user));
 
   const role = useMemo(
     () => workspaces.find((workspace) => workspace.id === workspaceId)?.role,
@@ -114,15 +115,17 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
       </div>
 
       <div className="flex flex-col gap-0.5 border-t border-stone-200 pt-3 dark:border-stone-800">
-        <NavLink to="/notifications" className={linkClass} onClick={onNavigate}>
-          <FiBell />
-          <span className="flex-1">Notifications</span>
-          {unread > 0 && (
-            <span className="rounded bg-brand-700 px-1.5 text-xs font-semibold text-white">
-              {unread > 99 ? '99+' : unread}
-            </span>
-          )}
-        </NavLink>
+        {!platformAdmin && (
+          <NavLink to="/notifications" className={linkClass} onClick={onNavigate}>
+            <FiBell />
+            <span className="flex-1">Notifications</span>
+            {unread > 0 && (
+              <span className="rounded bg-brand-700 px-1.5 text-xs font-semibold text-white">
+                {unread > 99 ? '99+' : unread}
+              </span>
+            )}
+          </NavLink>
+        )}
         <NavLink to="/settings" className={linkClass} onClick={onNavigate}>
           <FiSettings /> Settings
         </NavLink>

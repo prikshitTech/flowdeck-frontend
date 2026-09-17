@@ -55,6 +55,17 @@ export const authApi = {
   revokeSession: (sessionId: string) => deleteRequest<null>(endpoints.auth.session(sessionId))
 };
 
+export interface SetupStatus {
+  available: boolean;
+  requiresKey: boolean;
+}
+
+export const adminApi = {
+  setupStatus: () => getRequest<SetupStatus>(endpoints.admin.setup),
+  createSuperAdmin: (body: { name: string; email: string; password: string; setupKey?: string }) =>
+    postRequest<AuthResult>(endpoints.admin.setup, body)
+};
+
 export const workspaceApi = {
   list: (params?: QueryParams) => getListRequest<WorkspaceSummary>(endpoints.workspaces.root, params),
   create: (body: { name: string; description?: string }) =>

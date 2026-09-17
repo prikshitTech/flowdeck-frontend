@@ -8,6 +8,7 @@ import RealtimeBridge from '@/realtime/RealtimeBridge';
 import { fetchUnreadCount } from '@/store/slices/notificationSlice';
 import { fetchWorkspaces } from '@/store/slices/workspaceSlice';
 import { setSidebarOpen } from '@/store/slices/uiSlice';
+import { isSuperAdmin } from '@/utils/roles';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { cn } from '@/utils/cn';
 
@@ -15,11 +16,15 @@ export default function AppShell() {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const sidebarOpen = useAppSelector((state) => state.ui.sidebarOpen);
+  const platformAdmin = useAppSelector((state) => isSuperAdmin(state.auth.user));
 
   useEffect(() => {
     dispatch(fetchWorkspaces());
-    dispatch(fetchUnreadCount());
-  }, [dispatch]);
+
+    if (!platformAdmin) {
+      dispatch(fetchUnreadCount());
+    }
+  }, [dispatch, platformAdmin]);
 
   const openMenu = useCallback(() => dispatch(setSidebarOpen(true)), [dispatch]);
   const closeMenu = useCallback(() => dispatch(setSidebarOpen(false)), [dispatch]);

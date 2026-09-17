@@ -8,6 +8,7 @@ import { PageLoader } from '@/components/ui/Spinner';
 
 const LoginScreen = lazy(() => import('@/features/auth/LoginScreen'));
 const RegisterScreen = lazy(() => import('@/features/auth/RegisterScreen'));
+const SuperAdminSetupScreen = lazy(() => import('@/features/admin/SuperAdminSetupScreen'));
 const WorkspacesScreen = lazy(() => import('@/features/workspaces/WorkspacesScreen'));
 const OverviewScreen = lazy(() => import('@/features/workspaces/OverviewScreen'));
 const MembersScreen = lazy(() => import('@/features/workspaces/MembersScreen'));
@@ -26,6 +27,7 @@ function withSuspense(node: ReactNode) {
 }
 
 export const router = createBrowserRouter([
+  { path: '/setup/super-admin', element: withSuspense(<SuperAdminSetupScreen />) },
   {
     element: <GuestRoute />,
     children: [

@@ -7,6 +7,7 @@ import CreateWorkspaceModal from './CreateWorkspaceModal';
 import { Badge, EmptyState, PageHeader, Panel } from '@/components/ui/Display';
 import { PageLoader } from '@/components/ui/Spinner';
 import { timeAgo } from '@/utils/format';
+import { isSuperAdmin } from '@/utils/roles';
 import { useAppSelector } from '@/store/hooks';
 import type { WorkspaceSummary } from '@/types/models';
 
@@ -33,6 +34,7 @@ const WorkspaceCard = memo(function WorkspaceCard({ workspace }: { workspace: Wo
 export default function WorkspacesScreen() {
   const [creating, setCreating] = useState(false);
   const { items, listStatus } = useAppSelector((state) => state.workspaces);
+  const platformAdmin = useAppSelector((state) => isSuperAdmin(state.auth.user));
 
   const newButton = (
     <Button icon={<FiPlus />} onClick={() => setCreating(true)}>
@@ -42,7 +44,11 @@ export default function WorkspacesScreen() {
 
   return (
     <div className="mx-auto w-full max-w-5xl p-4 sm:p-6">
-      <PageHeader title="Workspaces" description="Everything your teams are working on." actions={newButton} />
+      <PageHeader
+        title={platformAdmin ? 'All workspaces' : 'Workspaces'}
+        description={platformAdmin ? 'Every workspace on this deployment.' : 'Everything your teams are working on.'}
+        actions={newButton}
+      />
 
       {listStatus === 'loading' && <PageLoader />}
 

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-import { authApi } from '@/api/services';
+import { adminApi, authApi } from '@/api/services';
 import { clearOfflineCache } from '@/utils/offline';
 import { tokenStorage } from '@/utils/storage';
 import type { AuthResult, User } from '@/types/models';
@@ -30,6 +30,12 @@ export const login = createAsyncThunk(
 export const register = createAsyncThunk(
   'auth/register',
   async (details: { name: string; email: string; password: string }) => keepTokens(await authApi.register(details))
+);
+
+export const registerSuperAdmin = createAsyncThunk(
+  'auth/registerSuperAdmin',
+  async (details: { name: string; email: string; password: string; setupKey?: string }) =>
+    keepTokens(await adminApi.createSuperAdmin(details))
 );
 
 export const loadProfile = createAsyncThunk('auth/loadProfile', () => authApi.me());
@@ -69,6 +75,7 @@ const authSlice = createSlice({
     builder
       .addCase(login.fulfilled, signedIn)
       .addCase(register.fulfilled, signedIn)
+      .addCase(registerSuperAdmin.fulfilled, signedIn)
       .addCase(loadProfile.fulfilled, signedIn)
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.user = action.payload;

@@ -3,7 +3,8 @@ import { FiLogOut, FiMenu, FiMoon, FiSun } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
 import IconButton from '@/components/ui/IconButton';
-import { Avatar } from '@/components/ui/Display';
+import { Avatar, Badge } from '@/components/ui/Display';
+import { isSuperAdmin } from '@/utils/roles';
 import { logout } from '@/store/slices/authSlice';
 import { disconnectSocket } from '@/realtime/socket';
 import { resetNotifications } from '@/store/slices/notificationSlice';
@@ -37,6 +38,7 @@ function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
         <div className="flex items-center gap-2 border-l border-stone-200 pl-3 dark:border-stone-800">
           <Avatar name={user.name} />
           <span className="hidden text-sm sm:inline">{user.name}</span>
+          {isSuperAdmin(user) && <Badge tone="brand">Super admin</Badge>}
           <IconButton label="Sign out" icon={<FiLogOut />} onClick={signOut} />
         </div>
       )}
