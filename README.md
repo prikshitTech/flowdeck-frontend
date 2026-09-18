@@ -165,3 +165,4 @@ A neutral stone palette with one teal accent, flat panels with borders instead o
 and icons from Feather via `react-icons`. The only animation is the loading spinner. Dark
 mode follows the system setting until you toggle it, and the choice is remembered. Every
 layout collapses to one column on small screens, and the sidebar becomes a drawer.
+ 
